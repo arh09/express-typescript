@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>
+        Sample TypeScript page
+    </title>
+</head>
+<body>
+  <div id="login-page" class="container open">
+    <h1>Log In For A Token</h1>
+    <div class="form-set">
+      <div class="form-group">
+        <lable class="form-label">User Name</lable>
+        <input id="user" type="text" class="form-control" />
+      </div>
+      <div class="form-group">
+        <lable class="form-label">Password</lable>
+        <input id="pass" type="password" class="form-control" />
+      </div>
+      <button class="btn">Log in</button>
+    </div>
+    <div class="other-links">
+      <div>
+        <div class="link" data-close="login-page" data-open="new-account-page">Don’t have an Account?</div>
+      </div>
+      <div>
+        <div class="link" data-close="login-page" data-open="forgot-pass-page">Forgot your password?</div>
+      </div>
+    </div>
+  </div>
+  
+  <div id="new-account-page" class="container close">
+    <div class='close-button'>
+      <div class="link" data-close="new-account-page" data-open="login-page">
+        <i class='fa fa-close' aria-hidden='true'></i>
+      </div>
+    </div>
+    <h1>New Account</h1>
+    <div class="form-set">
+      <div class="form-group">
+        <lable class="form-label">User Name</lable>
+        <input type="text" class="form-control" />
+      </div>
+      <div class="form-group">
+        <lable class="form-label">Password</lable>
+        <input type="password" class="form-control" />
+      </div>
+      <div class="form-group">
+        <lable class="form-label">Password again</lable>
+        <input type="password" class="form-control" />
+      </div>
+      <div class="form-group">
+        <lable class="form-label">E-mail</lable>
+        <input type="text" class="form-control" />
+      </div>
+      <button class="btn">Create Account</button>
+    </div>
+  </div>
+  
+  <div id="forgot-pass-page" class="container close">
+    <div class='close-button'>
+      <div class="link" data-close="forgot-pass-page" data-open="login-page">
+        <i class='fa fa-close' aria-hidden='true'></i>
+      </div>
+    </div>
+    <h1>Forgot password?</h1>
+    <div class="form-set">
+      <div class="form-group">
+        <lable class="form-label">E-mail</lable>
+        <input type="text" class="form-control" />
+      </div>
+      <button class="btn">Send</button>
+    </div>
+  </div>
+</body>
+</html>
+
+
+
