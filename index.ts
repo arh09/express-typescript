@@ -3,8 +3,26 @@ import express from "express";
 import jQuery from "jquery";
 const app = express();
 
+app.use("/ui", express.static('./ui/'));
+
 app.get('/', function(req, res) {
-    res.sendFile('index.html', {root: __dirname })
+  res.sendFile(__dirname + '/index.html')
+});
+
+app.get('/token', function(req, res) {
+  res.sendFile('dist/token.html', { root: '.' })
+});
+
+app.get('/users', async (req, res) => {
+  var users = await db.query(sql`
+  SELECT * FROM user;
+    `);
+  res.send(users)
+});
+
+app.get('/users/:user', async (req, res) => {
+  var users = await db.query(sql("SELECT * FROM user where user='" +req.params.user+"';" ));
+  res.send(users)
 });
 
 
@@ -41,17 +59,17 @@ class onFocus {
 
 var running = new onFocus();
 
-const connect = require('@databases/sqlite');
-const {sql} = require('@databases/sqlite');
+export const connect = require('@databases/sqlite');
+export const {sql} = require('@databases/sqlite');
 
-const db = connect('temp.db');
+export const db = connect('temp.db');
 
 async function prepare() {  
   await db.query(sql`
-    DROP TABLE app_data;
+    DROP TABLE user;
   `);
   await db.query(sql`
-    CREATE TABLE IF NOT EXISTS app_data (
+    CREATE TABLE IF NOT EXISTS user (
       user VARCHAR NOT NULL PRIMARY KEY,
       pass VARCHAR NOT NULL
     );
@@ -59,20 +77,20 @@ async function prepare() {
 }
 const prepared = prepare();
 
-async function set(user:string, pass:string) {
+export async function set(user:string, pass:string) {
   await prepared;
   await db.query(sql`
-    INSERT INTO app_data (user, pass)
+    INSERT INTO user (user, pass)
       VALUES (${user}, ${pass})
     ON CONFLICT (user) DO UPDATE
       SET pass=excluded.pass;
   `);
 }
 
-async function get(user:string) {
+export async function get(user:string) {
   await prepared;
   const results = await db.query(sql`
-    SELECT pass FROM app_data WHERE user=${user};
+    SELECT pass FROM user WHERE user=${user};
   `);
   if (results.length) {
     return results[0].pass;
@@ -81,28 +99,23 @@ async function get(user:string) {
   }
 }
 
-async function remove(user:string) {
+export async function remove(user:string) {
   await prepared;
   await db.query(sql`
-    DELETE FROM app_data WHERE user=${user};
+    DELETE FROM user WHERE user=${user};
   `);
 }
-
 async function run() {
-  const runCount = JSON.parse((await get('run_count')) || '0');
-  console.log('run count =', runCount);
-  await set('User0', JSON.stringify(runCount + 1));
-  console.log(await get('pass'));
-  await set('User1', 'Forbes');
-  console.log(await get('pass'));
-  await set('User2', 'Forbes Lindesay');
-  console.log(await get('pass'));
+  await set('admin', 'admin');
+  console.log(await get('admin'));
+  await set('admin2', 'admin2');
+  console.log(await get('admin2'));
   console.log(await db.query(sql`
-  SELECT * FROM app_data;
+  SELECT * FROM user;
     `));
-  await remove('User2');
+  await remove('admin2');
   console.log(await db.query(sql`
-  SELECT * FROM app_data;
+  SELECT * FROM user;
     `));
 }
 run().catch((ex) => {

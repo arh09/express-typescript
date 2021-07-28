@@ -43,13 +43,42 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.remove = exports.get = exports.set = exports.db = exports.sql = exports.connect = void 0;
 ///<reference path ="typings/globals/jquery/index.d.ts"/> 
 var express_1 = __importDefault(require("express"));
 var jquery_1 = __importDefault(require("jquery"));
 var app = express_1.default();
+app.use("/ui", express_1.default.static('./ui/'));
 app.get('/', function (req, res) {
-    res.sendFile('index.html', { root: __dirname });
+    res.sendFile(__dirname + '/index.html');
 });
+app.get('/token', function (req, res) {
+    res.sendFile('dist/token.html', { root: '.' });
+});
+app.get('/users', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var users;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, exports.db.query(exports.sql(templateObject_1 || (templateObject_1 = __makeTemplateObject(["\n  SELECT * FROM user;\n    "], ["\n  SELECT * FROM user;\n    "]))))];
+            case 1:
+                users = _a.sent();
+                res.send(users);
+                return [2 /*return*/];
+        }
+    });
+}); });
+app.get('/users/:user', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var users;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, exports.db.query(exports.sql("SELECT * FROM user where user='" + req.params.user + "';"))];
+            case 1:
+                users = _a.sent();
+                res.send(users);
+                return [2 /*return*/];
+        }
+    });
+}); });
 var port = process.env.PORT || 3000;
 app.listen(port, function () { return console.log('App listening on port ' + port); });
 var $ = jquery_1.default;
@@ -68,17 +97,17 @@ var onFocus = /** @class */ (function () {
     return onFocus;
 }());
 var running = new onFocus();
-var connect = require('@databases/sqlite');
-var sql = require('@databases/sqlite').sql;
-var db = connect('temp.db');
+exports.connect = require('@databases/sqlite');
+exports.sql = require('@databases/sqlite').sql;
+exports.db = exports.connect('temp.db');
 function prepare() {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, db.query(sql(templateObject_1 || (templateObject_1 = __makeTemplateObject(["\n    DROP TABLE app_data;\n  "], ["\n    DROP TABLE app_data;\n  "]))))];
+                case 0: return [4 /*yield*/, exports.db.query(exports.sql(templateObject_2 || (templateObject_2 = __makeTemplateObject(["\n    DROP TABLE user;\n  "], ["\n    DROP TABLE user;\n  "]))))];
                 case 1:
                     _a.sent();
-                    return [4 /*yield*/, db.query(sql(templateObject_2 || (templateObject_2 = __makeTemplateObject(["\n    CREATE TABLE IF NOT EXISTS app_data (\n      user VARCHAR NOT NULL PRIMARY KEY,\n      pass VARCHAR NOT NULL\n    );\n  "], ["\n    CREATE TABLE IF NOT EXISTS app_data (\n      user VARCHAR NOT NULL PRIMARY KEY,\n      pass VARCHAR NOT NULL\n    );\n  "]))))];
+                    return [4 /*yield*/, exports.db.query(exports.sql(templateObject_3 || (templateObject_3 = __makeTemplateObject(["\n    CREATE TABLE IF NOT EXISTS user (\n      user VARCHAR NOT NULL PRIMARY KEY,\n      pass VARCHAR NOT NULL\n    );\n  "], ["\n    CREATE TABLE IF NOT EXISTS user (\n      user VARCHAR NOT NULL PRIMARY KEY,\n      pass VARCHAR NOT NULL\n    );\n  "]))))];
                 case 2:
                     _a.sent();
                     return [2 /*return*/];
@@ -94,7 +123,7 @@ function set(user, pass) {
                 case 0: return [4 /*yield*/, prepared];
                 case 1:
                     _a.sent();
-                    return [4 /*yield*/, db.query(sql(templateObject_3 || (templateObject_3 = __makeTemplateObject(["\n    INSERT INTO app_data (user, pass)\n      VALUES (", ", ", ")\n    ON CONFLICT (user) DO UPDATE\n      SET pass=excluded.pass;\n  "], ["\n    INSERT INTO app_data (user, pass)\n      VALUES (", ", ", ")\n    ON CONFLICT (user) DO UPDATE\n      SET pass=excluded.pass;\n  "])), user, pass))];
+                    return [4 /*yield*/, exports.db.query(exports.sql(templateObject_4 || (templateObject_4 = __makeTemplateObject(["\n    INSERT INTO user (user, pass)\n      VALUES (", ", ", ")\n    ON CONFLICT (user) DO UPDATE\n      SET pass=excluded.pass;\n  "], ["\n    INSERT INTO user (user, pass)\n      VALUES (", ", ", ")\n    ON CONFLICT (user) DO UPDATE\n      SET pass=excluded.pass;\n  "])), user, pass))];
                 case 2:
                     _a.sent();
                     return [2 /*return*/];
@@ -102,6 +131,7 @@ function set(user, pass) {
         });
     });
 }
+exports.set = set;
 function get(user) {
     return __awaiter(this, void 0, void 0, function () {
         var results;
@@ -110,7 +140,7 @@ function get(user) {
                 case 0: return [4 /*yield*/, prepared];
                 case 1:
                     _a.sent();
-                    return [4 /*yield*/, db.query(sql(templateObject_4 || (templateObject_4 = __makeTemplateObject(["\n    SELECT pass FROM app_data WHERE user=", ";\n  "], ["\n    SELECT pass FROM app_data WHERE user=", ";\n  "])), user))];
+                    return [4 /*yield*/, exports.db.query(exports.sql(templateObject_5 || (templateObject_5 = __makeTemplateObject(["\n    SELECT pass FROM user WHERE user=", ";\n  "], ["\n    SELECT pass FROM user WHERE user=", ";\n  "])), user))];
                 case 2:
                     results = _a.sent();
                     if (results.length) {
@@ -124,6 +154,7 @@ function get(user) {
         });
     });
 }
+exports.get = get;
 function remove(user) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
@@ -131,7 +162,7 @@ function remove(user) {
                 case 0: return [4 /*yield*/, prepared];
                 case 1:
                     _a.sent();
-                    return [4 /*yield*/, db.query(sql(templateObject_5 || (templateObject_5 = __makeTemplateObject(["\n    DELETE FROM app_data WHERE user=", ";\n  "], ["\n    DELETE FROM app_data WHERE user=", ";\n  "])), user))];
+                    return [4 /*yield*/, exports.db.query(exports.sql(templateObject_6 || (templateObject_6 = __makeTemplateObject(["\n    DELETE FROM user WHERE user=", ";\n  "], ["\n    DELETE FROM user WHERE user=", ";\n  "])), user))];
                 case 2:
                     _a.sent();
                     return [2 /*return*/];
@@ -139,49 +170,37 @@ function remove(user) {
         });
     });
 }
+exports.remove = remove;
 function run() {
     return __awaiter(this, void 0, void 0, function () {
-        var runCount, _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m;
-        return __generator(this, function (_o) {
-            switch (_o.label) {
-                case 0:
-                    _b = (_a = JSON).parse;
-                    return [4 /*yield*/, get('run_count')];
+        var _a, _b, _c, _d, _e, _f, _g, _h;
+        return __generator(this, function (_j) {
+            switch (_j.label) {
+                case 0: return [4 /*yield*/, set('admin', 'admin')];
                 case 1:
-                    runCount = _b.apply(_a, [(_o.sent()) || '0']);
-                    console.log('run count =', runCount);
-                    return [4 /*yield*/, set('User0', JSON.stringify(runCount + 1))];
+                    _j.sent();
+                    _b = (_a = console).log;
+                    return [4 /*yield*/, get('admin')];
                 case 2:
-                    _o.sent();
-                    _d = (_c = console).log;
-                    return [4 /*yield*/, get('pass')];
+                    _b.apply(_a, [_j.sent()]);
+                    return [4 /*yield*/, set('admin2', 'admin2')];
                 case 3:
-                    _d.apply(_c, [_o.sent()]);
-                    return [4 /*yield*/, set('User1', 'Forbes')];
+                    _j.sent();
+                    _d = (_c = console).log;
+                    return [4 /*yield*/, get('admin2')];
                 case 4:
-                    _o.sent();
+                    _d.apply(_c, [_j.sent()]);
                     _f = (_e = console).log;
-                    return [4 /*yield*/, get('pass')];
+                    return [4 /*yield*/, exports.db.query(exports.sql(templateObject_7 || (templateObject_7 = __makeTemplateObject(["\n  SELECT * FROM user;\n    "], ["\n  SELECT * FROM user;\n    "]))))];
                 case 5:
-                    _f.apply(_e, [_o.sent()]);
-                    return [4 /*yield*/, set('User2', 'Forbes Lindesay')];
+                    _f.apply(_e, [_j.sent()]);
+                    return [4 /*yield*/, remove('admin2')];
                 case 6:
-                    _o.sent();
+                    _j.sent();
                     _h = (_g = console).log;
-                    return [4 /*yield*/, get('pass')];
+                    return [4 /*yield*/, exports.db.query(exports.sql(templateObject_8 || (templateObject_8 = __makeTemplateObject(["\n  SELECT * FROM user;\n    "], ["\n  SELECT * FROM user;\n    "]))))];
                 case 7:
-                    _h.apply(_g, [_o.sent()]);
-                    _k = (_j = console).log;
-                    return [4 /*yield*/, db.query(sql(templateObject_6 || (templateObject_6 = __makeTemplateObject(["\n  SELECT * FROM app_data;\n    "], ["\n  SELECT * FROM app_data;\n    "]))))];
-                case 8:
-                    _k.apply(_j, [_o.sent()]);
-                    return [4 /*yield*/, remove('User2')];
-                case 9:
-                    _o.sent();
-                    _m = (_l = console).log;
-                    return [4 /*yield*/, db.query(sql(templateObject_7 || (templateObject_7 = __makeTemplateObject(["\n  SELECT * FROM app_data;\n    "], ["\n  SELECT * FROM app_data;\n    "]))))];
-                case 10:
-                    _m.apply(_l, [_o.sent()]);
+                    _h.apply(_g, [_j.sent()]);
                     return [2 /*return*/];
             }
         });
@@ -191,4 +210,4 @@ run().catch(function (ex) {
     console.error(ex.stack);
     process.exit(1);
 });
-var templateObject_1, templateObject_2, templateObject_3, templateObject_4, templateObject_5, templateObject_6, templateObject_7;
+var templateObject_1, templateObject_2, templateObject_3, templateObject_4, templateObject_5, templateObject_6, templateObject_7, templateObject_8;
