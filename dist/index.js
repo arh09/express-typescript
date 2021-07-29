@@ -49,6 +49,8 @@ var express_1 = __importDefault(require("express"));
 var jquery_1 = __importDefault(require("jquery"));
 var app = express_1.default();
 app.use("/ui", express_1.default.static('./ui/'));
+app.use(express_1.default.json()); // to support JSON-encoded bodies
+app.use(express_1.default.urlencoded()); // to support URL-encoded bodies
 app.get('/', function (req, res) {
     res.sendFile(__dirname + '/index.html');
 });
@@ -76,6 +78,28 @@ app.get('/users/:user', function (req, res) { return __awaiter(void 0, void 0, v
                 users = _a.sent();
                 res.send(users);
                 return [2 /*return*/];
+        }
+    });
+}); });
+// POST USER
+app.post('/', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var user, err_1;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 2, , 3]);
+                return [4 /*yield*/, exports.db.query(exports.sql("INSERT INTO user ( user, pass) VALUES('" + req.body.user + "','" + req.body.pass + "');"))];
+            case 1:
+                user = _a.sent();
+                res.json('USUARIO CREADO!!');
+                return [3 /*break*/, 3];
+            case 2:
+                err_1 = _a.sent();
+                // tslint:disable-next-line:no-console
+                console.error(err_1);
+                res.json({ error: err_1.message || err_1 });
+                return [3 /*break*/, 3];
+            case 3: return [2 /*return*/];
         }
     });
 }); });

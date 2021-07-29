@@ -1,9 +1,12 @@
 ///<reference path ="typings/globals/jquery/index.d.ts"/> 
 import express from "express";
 import jQuery from "jquery";
+
 const app = express();
 
 app.use("/ui", express.static('./ui/'));
+app.use(express.json());       // to support JSON-encoded bodies
+app.use(express.urlencoded()); // to support URL-encoded bodies
 
 app.get('/', function(req, res) {
   res.sendFile(__dirname + '/index.html')
@@ -24,6 +27,19 @@ app.get('/users/:user', async (req, res) => {
   var users = await db.query(sql("SELECT * FROM user where user='" +req.params.user+"';" ));
   res.send(users)
 });
+
+// POST USER
+
+app.post( '/', async ( req, res ) => {
+  try {
+      const user = await db.query(sql("INSERT INTO user ( user, pass) VALUES('"+req.body.user+"','"+req.body.pass+"');"));
+      res.json('USUARIO CREADO!!');
+  } catch ( err ) {
+      // tslint:disable-next-line:no-console
+      console.error(err);
+      res.json( { error: err.message || err } );
+  }
+} );
 
 
 const port = process.env.PORT || 3000;

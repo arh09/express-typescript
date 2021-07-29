@@ -1,5 +1,9 @@
 {
   "globalDependencies": {
     "jquery": "registry:dt/jquery#1.10.0+20170310222111"
+  },
+  "dependencies": {
+    "mime": "registry:npm/mime#1.3.0+20160723033700",
+    "serve-static": "registry:npm/serve-static#1.11.1+20161113104247"
   }
 }
