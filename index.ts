@@ -124,12 +124,6 @@ export async function remove(user:string) {
 async function run() {
   await set('admin', 'admin');
   console.log(await get('admin'));
-  await set('admin2', 'admin2');
-  console.log(await get('admin2'));
-  console.log(await db.query(sql`
-  SELECT * FROM user;
-    `));
-  await remove('admin2');
   console.log(await db.query(sql`
   SELECT * FROM user;
     `));
