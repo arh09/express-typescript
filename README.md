@@ -12,3 +12,7 @@ Repositorio para una app con una bd mysql, tabla de usuarios, login y producció
 
 *   localhost:3000/users -> USUARIOS
 *   localhost:3000/users/:user -> USER
+
+## APP DATA
+
+{user:admin,pass:admin}
