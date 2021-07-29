@@ -1,3 +1,5 @@
+const { json } = require("express");
+
 async function button() {
     var user = document.getElementById('user').value
     var pass = document.getElementById('pass').value
@@ -12,8 +14,10 @@ async function button() {
                 localStorage.setItem('token', token());
                 var cat = localStorage.getItem('token');
                 console.log(cat)
+                alert('CORRECT LOGGED IN. YOUR TOKEN: '+ cat)
             }else{
-                console.log('ERROR')
+                console.log('ERROR LOGGIN IN')
+                alert('THOSE USER AND PASSWORD DONT MATCH')
             }
           
     });
@@ -39,7 +43,10 @@ async function showJson() {
             .then(response => response.json())
             .then(data => {
                     console.log(data)
+                    document.getElementById('json').innerText = 'DATA JSON: \n\n'+ JSON.stringify(data)
                     }
                 );
+    }else{
+        alert('THIS TOKEN AND LAST PRODUCED ONE DOESNT MATCH')
     }
 }
